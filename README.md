@@ -1,4 +1,4 @@
-# Database Migration Using Github Actions & Supabase CLI
+# Database Migration Using GitHub Actions & Supabase CLI
 
 ## Step by step
 1. Install Supabase CLI
@@ -24,19 +24,85 @@
     ```
     supabase projects list
     ```
-    to show available projects. The output will show organization ID, reference ID, name, region, etc. Reference ID will be your Project ID and you need to pay attention on this. Since, Project ID will be required for our setup.
+    to show available projects. The output will show <em>Organization ID</em>, <em>Reference ID</em>, name, region, etc. <em>Reference ID</em> will be your <em>Project ID</em> and you need to pay attention on this. Since, Project ID will be required for our setup.
 5. Link the Supabase CLI to desired Project ID.
     ```
     supabase link --project-ref {your_project_id}
     ```
     Then you will be asked to enter database password. This password should be shown when you create the project for the first time, but if you forgot, you can regenerate password through Supabase dashboard.
-6. Create Github repository and push the supabase project to this repo
+6. Create GitHub repository and push the supabase project to this repo
     ```
     git init
     git add .
     git commit -am "Initial commit"
+    git remote add origin https://github.com/yourusername/yourrepo
+    git branch -M main
+    git push -u origin main
+
+    # if error since remote repo has init files
+    git branch --set-upstream-to=origin/main main
+    git config pull.rebase true
+    git pull
+    git push
     ```
-## Usage
+7. Start Supabase. Ensure you have Docker.
+    ```
+    supabase start
+    ```
+    you will see output like following:
+    ```
+    Started supabase local development setup.
+
+            API URL : http://127.0.0.1:54321
+        GraphQL URL : http://127.0.0.1:54321/graphql/v1
+    S3 Storage URL  : http://127.0.0.1:54321/storage/v1/s3
+            DB URL  : postgresql://postgres:postgres@127.0.0.1:54322/postgres
+        Studio URL  : http://127.0.0.1:54323
+        Inbucket URL: http://127.0.0.1:54324
+        JWT secret  : super-secret-jwt-token-with-at-least-32-characters-long
+            anon key: eyJhbGciOiJ2IUzI1NiI2sInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+    service_role key: eyJhbGciOiJIUzI1NdiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+    S3 Access Key   : 625729a08b95bf1b7fef351a663f3a23c
+    S3 Secret Key   : 850181e4652dd023b7a98c58ae0d2d34bd487ee0cc3254aed6eda37307425907
+        S3 Region   : local
+    ```
+    Now, you can access your Supabase dashboard using this link: `http://127.0.0.1:54323/`. This is connected to our remote Supabase project.
+
+## Migration
+
+### Local Migration
+1. Create migration file
+    ```
+    supabase migration new new_employee
+    ```
+   This will generate blank sql file located in `supabase/migrations` folder.
+2. Open this file and create query, for example:
+    ```sql
+    create table public.employees (
+        id integer primary key generated always as identity,
+        name text
+    )
+    ```
+3. Apply the migration script to our local database
+    ```
+    supabase db reset
+    ```
+    the output:
+    ```
+    Resetting local database...
+    Recreating database...
+    Initialising schema...
+    Seeding globals from roles.sql...
+    Applying migration 20250321164102_new_employee.sql...
+    WARN: no files matched pattern: supabase/seed.sql
+    Restarting containers...
+    Finished supabase db reset on branch main
+    ```
+    Basically, this command will recreate our database from scratch and applying our migration scripts under `migrations` folder.
+
+
+### Remote Migration
+1. Create GitHub Actions > Simple workflow
 
 ### Installing
 
