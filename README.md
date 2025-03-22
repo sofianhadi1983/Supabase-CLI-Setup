@@ -214,6 +214,8 @@ To find your Supabase Project ID, follow these steps:
     curl -O https://raw.githubusercontent.com/supabase/supabase-action-example/refs/heads/main/supabase/remotes/production.tf
     curl -O https://raw.githubusercontent.com/supabase/supabase-action-example/refs/heads/main/supabase/remotes/provider.tf
     ```
+4. Now, whenever you create PR and merge to develop or main, the GitHub Actions will migrate the current schema to Supabase.
+
 ## References
 
 - [Supabase Doc](https://supabase.com/docs)
