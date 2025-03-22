@@ -26,12 +26,12 @@
     ```
     to show available projects. The output will show <em>Organization ID</em>, <em>Reference ID</em>, name, region, etc. <em>Reference ID</em> will be your <em>Project ID</em> and you need to pay attention on this. Since, Project ID will be required for our setup.
 5. Link the Supabase CLI to desired Project ID.
-    ```
+    ```sh
     supabase link --project-ref {your_project_id}
     ```
     Then you will be asked to enter database password. This password should be shown when you create the project for the first time, but if you forgot, you can regenerate password through Supabase dashboard.
 6. Create GitHub repository and push the supabase project to this repo
-    ```
+    ```sh
     git init
     git add .
     git commit -am "Initial commit"
@@ -46,11 +46,11 @@
     git push
     ```
 7. Start Supabase. Ensure you have Docker.
-    ```
+    ```sh
     supabase start
     ```
     you will see output like following:
-    ```
+    ```sh
     Started supabase local development setup.
 
             API URL : http://127.0.0.1:54321
@@ -72,7 +72,7 @@
 
 ### Local Migration
 1. Create migration file
-    ```
+    ```sh
     supabase migration new new_employee
     ```
    This will generate blank sql file located in `supabase/migrations` folder.
@@ -84,11 +84,11 @@
     )
     ```
 3. Apply the migration script to our local database
-    ```
+    ```sh
     supabase db reset
     ```
     the output:
-    ```
+    ```sh
     Resetting local database...
     Recreating database...
     Initialising schema...
@@ -194,17 +194,28 @@ To find your Supabase Project ID, follow these steps:
 
 #### Setup CI/CD
 1. **Create folder** `.github/workflows` in the root folder.
-    ```
+    ```sh
     mkdir -p .github
     mkdir -p .github/workflows
     ```
 2. **Copy 3 files** `ci.yml`, `production.yaml`, `staging.yaml` from [https://github.com/supabase/supabase-action-example/blob/main/.github/workflows/](https://github.com/supabase/supabase-action-example/blob/main/.github/workflows/)
-    ```
+    ```sh
     cd .github/workflows
     curl -O https://raw.githubusercontent.com/supabase/supabase-action-example/refs/heads/main/.github/workflows/ci.yaml
     curl -O https://raw.githubusercontent.com/supabase/supabase-action-example/refs/heads/main/.github/workflows/production.yaml
     curl -O https://raw.githubusercontent.com/supabase/supabase-action-example/refs/heads/main/.github/workflows/staging.yaml
+    curl -O https://raw.githubusercontent.com/supabase/supabase-action-example/refs/heads/main/.github/workflows/preview.yaml
     ```
+3. **Create folder called `remotes`** and fetch `terraform` config  from [https://github.com/supabase/supabase-action-example/blob/main/supabase/remotes/](https://github.com/supabase/supabase-action-example/blob/main/supabase/remotes/)
+    ```sh
+    mkdir -p supabase/remotes
+    cd supabase/remotes
+    curl -O https://raw.githubusercontent.com/supabase/supabase-action-example/refs/heads/main/supabase/remotes/preview.tf
+    curl -O https://raw.githubusercontent.com/supabase/supabase-action-example/refs/heads/main/supabase/remotes/production.tf
+    curl -O https://raw.githubusercontent.com/supabase/supabase-action-example/refs/heads/main/supabase/remotes/provider.tf
+    ```
+4. Now, whenever you create PR and merge to develop or main, the GitHub Actions will migrate the current schema to Supabase.
+
 ## References
 
 - [Supabase Doc](https://supabase.com/docs)
